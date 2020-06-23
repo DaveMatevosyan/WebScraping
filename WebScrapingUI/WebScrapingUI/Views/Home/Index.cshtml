@@ -1,0 +1,96 @@
+﻿@model WebApi.Models.RequestModel
+@using BaseScraperLibrary;
+
+@{
+    ViewBag.Title = "Search Page";
+}
+
+<html>
+<head>
+
+</head>
+<body>
+    <div class="jumbotron">
+
+        <h1>Web Scraping</h1>
+        <br>
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <h3>Type your search</h3>
+
+            @Html.EditorFor(Model => Model.ItemName, new { @class = "search" })
+            @Html.ValidationMessageFor(Model => Model.ItemName, "", new { @class = "text-danger" })
+
+            <br>
+            <h3>Select the sources</h3>
+
+            <div>
+                @foreach (var cat in Enum.GetValues(typeof(AvailableCategories)))
+                {
+                    <a href="javascript:void(0)" class="dropbtn" onclick="myFunction.call(this)">@(cat.ToString().Replace('_', ' '))(@((ViewData["sites"] as Dictionary<string, string>).Where(s => s.Value == cat.ToString()).Select(s => s.Key).Count()))</a>
+                    <div class="dropdown-content hide" id="myDropdown2">
+                        <div class="checkboxes_container">
+                            @foreach (string site in (ViewData["sites"] as Dictionary<string, string>).Where(s => s.Value == cat.ToString()).Select(s => s.Key))
+                            {
+                                <div class="div_check">
+                                    <strong>@site</strong>
+                                    @Html.CheckBoxFor(Model => Model.AllSites[site])
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <br>
+                }
+            </div>
+
+            <br>
+            <h3>Select currency and prices</h3>
+            <br>
+            @Html.DropDownListFor(Model => Model.Currency, new SelectList(Enum.GetValues(typeof(BaseScraperLibrary.AvailableCurrencies))), "Select Currency", new { @class = "drop" })
+            <br>
+
+            <br>
+            @Html.Label("Min Price")
+            @Html.TextBoxFor(Model => Model.MinPrice, new { type = "number", min = "0" })
+            <br><br>
+
+            @Html.Label("Max Price")
+            @Html.TextBoxFor(Model => Model.MaxPrice, new { type = "number", min = "0" })
+            <br><br>
+
+            <h3 class="h3_number">Number of items</h3>
+            @Html.TextBoxFor(Model => Model.ItemCount, new { @class = "itemcount", type = "number", min = "5", max = "100" })
+            @Html.ValidationMessageFor(Model => Model.ItemCount, "", new { @class = "text-danger" })
+
+            <br><br>
+            <input type="submit" formmethod="post" name="Search" value="Search" class="btn btn-primary" />
+        }
+    </div>
+
+    <script>
+        var drptochoose;
+        function myFunction() {
+            var isAlreadyOpen = false;
+            if (!this.nextElementSibling.classList.contains('hide')) {
+                // if the clicked button dropdown is already open then use this bool to not show it again.
+                isAlreadyOpen = true;
+            }
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var d = 0; d < dropdowns.length; d++) {
+                var openDropdown = dropdowns[d];
+                if (!openDropdown.classList.contains('hide')) {
+                    openDropdown.classList.toggle("hide");
+                }
+            }
+            if (!isAlreadyOpen) {
+                // if the dropdown was hidden when clicked then show it
+                this.nextElementSibling.classList.toggle("hide");
+            }
+        }
+
+    </script>
+
+</body>
+</html>

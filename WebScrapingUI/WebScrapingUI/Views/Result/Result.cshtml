@@ -1,0 +1,40 @@
+﻿@model IEnumerable<BaseScraperLibrary.Item>
+
+@{
+    ViewBag.Title = "Search results";
+}
+<div class="res_main">
+    @if (Model != null && Model.Count() != 0)
+    {
+        <h1 class="res_count">@((int)ViewData["Count"]) Results@*(@((double)ViewData["time"]/1000) sec)*@</h1>
+        if (Request.IsAuthenticated)
+        {
+            @Html.ActionLink(linkText: "Save this search", actionName: "Create", controllerName: "Catalog", routeValues: null, htmlAttributes: new { @class = "btn btn-info" })
+            if (TempData["Message"] != null)
+            {
+                <h4 class="add_message" style="color:@TempData["Color"]">@TempData["Message"]</h4>
+                @Html.ActionLink("Click to see catalogs", "ShowCatalogs", "Catalog", null, new { @class = "btn btn-link seecatalog" })
+            }
+        }
+
+        <div class="results_container">
+            @foreach (var item in Model)
+            {
+                <a target="_blank" href="@item.RealLink" class="item_container">
+                    <img src="@item.ImgLink" class="res_img">
+                    <div class="res_details">
+                        <div class="res_name">@item.Name</div>
+                        <div class="res_price">@item.Price</div>
+                        <div class="res_sitename">@item.SiteName</div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    @if (Model == null || Model.Count() == 0)
+    {
+        <h1 class="res_count">Your search did not match any postings</h1>
+        @Html.ActionLink(linkText: "Use more popular keywords and try again", actionName: "Index", controllerName: "Home", routeValues: null, htmlAttributes: new { @class = "btn btn-link tryagain" })
+    }
+</div>
+

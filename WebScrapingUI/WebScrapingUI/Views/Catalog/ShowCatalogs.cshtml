@@ -1,0 +1,35 @@
+﻿@model IEnumerable<WebScrapingUI.Entities.Requests>
+
+@{
+    ViewBag.Title = "ShowCatalogs";
+}
+
+<div class="res_main">
+    @if (Model != null && Model.Count() != 0)
+    {
+        <h1 class="res_count">Your Catalogs</h1>
+        <div class="results_container">
+            @foreach (var request in Model)
+            {
+                <div class="catalog">
+                    <div class="search_details">
+                        <h4>Search: @request.ItemName</h4>
+                        <h4>Sites: @request.Sites</h4>
+                        <h4>Currency: @request.Currency</h4>
+                        <h4>Price: @request.MinPrice - @request.MaxPrice</h4>
+                        <h4>Count: @request.ItemCount</h4>
+                    </div>
+                    <div class="buttons_container">
+                        @Html.ActionLink("Search", "Get", "Catalog", new { id = request.RequestId }, new { @class = "btn btn-success" })
+                        @Html.ActionLink("Delete", "Delete", "Catalog", new { id = request.RequestId }, new { @class = "btn btn-success" })
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    @if (Model == null || Model.Count() == 0)
+    {
+        <h1 class="res_count">You don't have saved catalogs yet</h1>
+    }
+</div>
+
